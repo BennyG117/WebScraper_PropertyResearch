@@ -1,0 +1,26 @@
+@* This is a Partial *@
+
+@model LoginUser
+
+@*ERRORS HERE*@
+<div class="container w-75 mx-auto">
+    <h1>Login</h1>
+    <form asp-action="Login" asp-controller="User" method="Post" class="shadow p-3 rounded">
+        @* section *@
+        <div class="mb-3">
+            <label asp-for="LoginEmail"></label>
+            <input asp-for="LoginEmail" type="text" class="form-control"/>
+            <span asp-validation-for="LoginEmail" class="text-danger font-weight-bold"></span>
+        </div>
+        @* section *@
+        <div class="mb-3">
+            <label asp-for="LoginPassword"></label>
+            <input asp-for="LoginPassword" type="password" class="form-control"/>
+            <span asp-validation-for="LoginPassword" class="text-danger font-weight-bold"></span>
+        </div>
+    <button class="btn btn-outline-dark">Login</button>
+
+    </form>
+
+
+</div>
