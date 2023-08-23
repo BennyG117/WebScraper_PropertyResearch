@@ -52,10 +52,10 @@ public class SiteCheck
     public User? Creator {get; set;}
 
 
-    // ====== adding many to many - User to Recipe linking ========
+    // ====== adding many to many - User to SiteCheck linking ========
 
     //!many to many
-    // public List<UsedSiteCheck> StaffUsedSiteChecks {get; set;} = new List<UsedSiteCheck>();
+    public List<UsedSiteCheck> StaffCreatedSiteChecks {get; set;} = new List<UsedSiteCheck>();
 
     // =================================================================
 

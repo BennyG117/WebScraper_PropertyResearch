@@ -51,11 +51,11 @@ public class User
     // list of siteCheck objects (adding to an empty list of siteCheck objects):
 
     //One to many ---- user can have many siteChecks =====
-    // public List<SiteCheck> CreatedSiteChecks {get; set;} = new List<SiteCheck>();
+    public List<SiteCheck> CreatedSiteChecks {get; set;} = new List<SiteCheck>();
 
 
     //!many to many ===================================
-    // public List<UsedSiteCheck> UsedSiteChecks {get; set;} = new List<UsedSiteCheck>();
+    public List<UsedSiteCheck> UsedSiteChecks {get; set;} = new List<UsedSiteCheck>();
 
 //! =================================================================
 

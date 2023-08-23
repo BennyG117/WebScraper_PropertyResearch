@@ -1,0 +1,30 @@
+@model SiteCheck
+
+<div>
+    <div>
+        <h1>Site Check</h1>
+        <p>Hi "First Name", enter your target property's Parcel ID to generate property research results.</p>
+        <p>(Pima County Only)</p>
+    </div>
+    <div class="container w-100 mx-auto">
+        <form asp-controller="SiteCheck" asp-action="Create" method="post" class="shadow p-3 rounded d-flex ">
+            <div class="d-flex flex-column">
+                @* section *@
+                <div class="mb-3">
+                    <label asp-for="SiteCheckName"></label>
+                    <input asp-for="SiteCheckName" type="text" class="form-control"/>
+                    <span asp-validation-for="SiteCheckName" class="text-danger font-weight-bold"></span>
+                </div>
+                @* section *@
+                <div class="mb-3">
+                    <label asp-for="SiteCheckParcelID"></label>
+                    <input asp-for="SiteCheckParcelID" type="text" class="form-control"/>
+                    <span asp-validation-for="SiteCheckParcelID" class="text-danger font-weight-bold"></span>
+                </div>
+                <div>
+                    <button class="btn btn-outline-dark">Submit Site Check Request</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

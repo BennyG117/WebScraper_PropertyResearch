@@ -36,7 +36,7 @@ public class UserController : Controller
     {
         if (HttpContext.Session.GetInt32("UUID") != null)
         {
-            return RedirectToAction("Index", "Recipe");
+            return RedirectToAction("Index", "SiteCheck");
         }
         return View("Index");
     }
@@ -60,7 +60,7 @@ public class UserController : Controller
 
 
         //UPDATE:
-        return RedirectToAction("Index", "Recipe");
+        return RedirectToAction("Index", "SiteCheck");
     }
     //  Login method ================================================
     [HttpPost("/login")]
@@ -92,7 +92,7 @@ public class UserController : Controller
         HttpContext.Session.SetString("UserName", userInDb.FirstName);
         
         //UPDATE:
-        return RedirectToAction("Index", "Recipe");
+        return RedirectToAction("Index", "SiteCheck");
     }
 
 

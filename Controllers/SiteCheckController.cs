@@ -28,156 +28,162 @@ public class SiteCheckController : Controller
         _logger = logger;
         db = context;
     }
-//TODO - UPDATE ENTIRE CONTROLLER BELOW AND ADD WEB SCRAPER ROUTES ============================================
 
-//! ==============(DASHBOARD)===================
-    // [HttpGet("dashboard")]
-    // public IActionResult Index()
-    // {
-    //     // recipes is AsyncLocal refered to as "vacay" on the other view page*
-    // List<Recipe> recipes = db.Recipes.Include(v => v.Creator).Include(l => l.PeopleTriedRecipes).ToList();        
+// ==============(DASHBOARD)===================
+    [HttpGet("dashboard")]
+    public IActionResult Index()
+    {
+    List<SiteCheck> siteChecks = db.SiteChecks.Include(v => v.Creator).Include(c => c.StaffCreatedSiteChecks).ToList();        
 
-
-    // // creating list =======================
-    // User allTriedRecipes = db.Users.Where(i => i.UserId == (int) HttpContext.Session.GetInt32("UUID")).Include(r => r.UserTriedRecipes).ThenInclude(single => single.Recipe).FirstOrDefault();
-
-    // ViewBag.recipeTried = allTriedRecipes;
-
-    //     // passing recipes down to the view...
-    //     return View("All", recipes);
-    // }
+    return View("All", siteChecks);
 
 
+    //! creating list for many to many on same page =======================
+    // User allCreatedSiteChecks = db.Users.Where(i => i.UserId == (int) HttpContext.Session.GetInt32("UUID")).Include(r => r.UsedSiteChecks).ThenInclude(single => single.SiteCheck).FirstOrDefault();
 
-//! ==============(NEW - recipe)==================
+    // ViewBag.teamCreatedSiteCheck = allCreatedSiteChecks;
 
-    // [HttpGet("recipe/new")]
-    // public IActionResult New()
-    // {
-    //     //returns itself if left blank
-    //     return View();
-    // }
-
-//! ========(handle NEW Recipe Method - view)=========
-
-    // [HttpPost("recipe/create")]
-    // //bringing in the model
-    // public IActionResult Create(Recipe newRecipe)
-    // {
-
-    //     //checks model requirements*
-    //     if(!ModelState.IsValid)
-    //     {
-    //         //trigger to see validations
-    //         return View("New");
-    //     }
-
-    //     newRecipe.UserId = (int) HttpContext.Session.GetInt32("UUID");
-
-    //     //recipes from context
-    //     db.Recipes.Add(newRecipe);
-    //     db.SaveChanges();
-    //     //When success, send to Details view single recipe
-    //     return RedirectToAction("Details",  new {id = newRecipe.RecipeId});
-    // }
+        //! passing SiteChecks down to the view...
+        // return View("All", siteChecks);
+    }
 
 
-//! ==============(get recipe view/view one)===================
-    // [HttpGet("recipe/{id}")]
 
-    // //adding in id parameter*
-    // public IActionResult Details(int id)
-    // {
-    //     // confirm it matches the id we're passing in above*
-    // Recipe? recipes = db.Recipes.Include(v => v.Creator).Include(r => r.PeopleTriedRecipes).ThenInclude(u => u.User).FirstOrDefault(p => p.RecipeId == id);
+// ==============(NEW - SiteCheck)==================
 
-    // if (recipes == null)
-    // {
-    //     return RedirectToAction("Index");
-    // }
-    //     //passing recipes (the data) down to the view...
-    //     return View("Details", recipes);
-    // }
+    [HttpGet("sitecheck/new")]
+    public IActionResult New()
+    {
+        //returns itself if left blank
+        return View();
+    }
 
-//! ==============(Edit Recipes)===================
-    // [HttpGet("recipe/{id}/edit")]
+// ========(handle NEW SiteCheck Method - view)=========
 
-    // //adding in id parameter*
-    // public IActionResult Edit(int id)
-    // {
-    //     // confirm it matches the id we're passing in above*
-    // Recipe? recipes = db.Recipes.Include(v => v.Creator).FirstOrDefault(p => p.RecipeId == id);
+    [HttpPost("sitecheck/create")]
+    //bringing in the model
+    public IActionResult Create(SiteCheck newSiteCheck)
+    {
 
-    // //confirming the creator of the recipe is the one able to edit it* (Session check)
-    // if (recipes == null || recipes.UserId != HttpContext.Session.GetInt32("UUID"))
-    // {
-    //     return RedirectToAction("Index");
-    // }
-    //     //passing recipes (the data) down to the view...
-    //     return View("Edit", recipes);
-    // }
+        //checks model requirements*
+        if(!ModelState.IsValid)
+        {
+            //trigger to see validations
+            return View("New");
+        }
+//! Adding in Web Scraper ===================================
 
+    string websiteZoningExample = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
+    HtmlWeb web = new HtmlWeb();
+    HtmlDocument doc = web.Load(websiteZoningExample); 
 
-//! ==============(Update Recipe)===================
-    // [HttpPost("recipe/{id}/update")]
+    // string countyZoning = doc.DocumentNode.SelectSingleNode("//a[@target='_blank' and contains(@href, 'code=CB-1')]")?.InnerText ?? "No data found";
 
-    // //adding in id parameter*
-    // public IActionResult Update(Recipe editedRecipe, int id)
-    // {
+    string countyZoning = doc.GetElementbyId("overlay_ZONECNTY")?.SelectSingleNode("a")?.InnerText ?? "No data found";
 
-    //     if (!ModelState.IsValid)
-    //     {
-    //         return Edit(id);
-    //     }
+    newSiteCheck.SiteCheckName = countyZoning;  
+//!==========================================================
 
-    //     // confirm it matches the id we're passing in above*
-    // Recipe? recipes = db.Recipes.Include(v => v.Creator).FirstOrDefault(p => p.RecipeId == id);
+        newSiteCheck.UserId = (int) HttpContext.Session.GetInt32("UUID");
 
-    // //confirming the creator of the vacation is the one able to edit it* (Session check)
-    // if (recipes == null || recipes.UserId != HttpContext.Session.GetInt32("UUID"))
-    // {
-    //     return RedirectToAction("Index");
-    // }
-    //     recipes.RecipeTitle = editedRecipe.RecipeTitle;
-    //     recipes.Ingredient1 = editedRecipe.Ingredient1;
-    //     recipes.Ingredient2 = editedRecipe.Ingredient2;
-    //     recipes.Ingredient3 = editedRecipe.Ingredient3;
-    //     recipes.Ingredient4 = editedRecipe.Ingredient4;
-    //     recipes.Ingredient5 = editedRecipe.Ingredient5;
-    //     recipes.Instructions = editedRecipe.Instructions;
-    //     recipes.Vegetarian = editedRecipe.Vegetarian;
-    //     recipes.GlutenFree = editedRecipe.GlutenFree;
-    //     recipes.UpdatedAt = DateTime.Now;
-
-    //     db.Recipes.Update(recipes);
-    //     db.SaveChanges();
-    //     // return RedirectToAction("Edit", new {id = id});
-    //     // return RedirectToAction("Index");
-    //     return RedirectToAction("Details",  new {id = editedRecipe.RecipeId});
-    // }
+        //siteChecks from context
+        db.SiteChecks.Add(newSiteCheck);
+        db.SaveChanges();
+        //When success, send to Details view single SiteCheck
+        return RedirectToAction("Details",  new {id = newSiteCheck.SiteCheckId});
+    }
 
 
-    //!Delete Method ============================================
-    // [HttpPost("recipe/{id}/delete")]
-    // public IActionResult Delete(int id)
+// ==============(get sitecheck view/view one)===================
+    [HttpGet("sitecheck/{id}")]
+
+    //adding in id parameter*
+    public IActionResult Details(int id)
+    {
+        // confirm it matches the id we're passing in above*
+    SiteCheck? siteChecks = db.SiteChecks.Include(c => c.Creator).Include(r => r.StaffCreatedSiteChecks).ThenInclude(u => u.User).FirstOrDefault(p => p.SiteCheckId == id);
+
+    if (siteChecks == null)
+    {
+        return RedirectToAction("Index");
+    }
+        //passing siteChecks (the data) down to the view...
+        return View("Details", siteChecks);
+    }
+
+// ==============(Edit SiteChecks)===================
+    [HttpGet("sitecheck/{id}/edit")]
+
+    //adding in id parameter*
+    public IActionResult Edit(int id)
+    {
+        // confirm it matches the id we're passing in above*
+    SiteCheck? siteChecks = db.SiteChecks.Include(c => c.Creator).FirstOrDefault(p => p.SiteCheckId == id);
+
+    //confirming the creator of the siteCheck is the one able to edit it* (Session check)
+    if (siteChecks == null || siteChecks.UserId != HttpContext.Session.GetInt32("UUID"))
+    {
+        return RedirectToAction("Index");
+    }
+        //passing siteChecks (the data) down to the view...
+        return View("Edit", siteChecks);
+    }
+
+
+// ==============(Update SiteCheck)===================
+    [HttpPost("sitecheck/{id}/update")]
+
+    //adding in id parameter*
+    public IActionResult Update(SiteCheck editedSiteCheck, int id)
+    {
+
+        if (!ModelState.IsValid)
+        {
+            return Edit(id);
+        }
+
+        // confirm it matches the id we're passing in above*
+    SiteCheck? siteChecks = db.SiteChecks.Include(c => c.Creator).FirstOrDefault(p => p.SiteCheckId == id);
+
+    //confirming the creator of the SiteCheck is the one able to edit it* (Session check)
+    if (siteChecks == null || siteChecks.UserId != HttpContext.Session.GetInt32("UUID"))
+    {
+        return RedirectToAction("Index");
+    }
+        siteChecks.SiteCheckName = editedSiteCheck.SiteCheckName;
+        siteChecks.SiteCheckParcelID = editedSiteCheck.SiteCheckParcelID;
+        siteChecks.UpdatedAt = DateTime.Now;
+
+        db.SiteChecks.Update(siteChecks);
+        db.SaveChanges();
+        // return RedirectToAction("Edit", new {id = id});
+        // return RedirectToAction("Index");
+        return RedirectToAction("Details",  new {id = editedSiteCheck.SiteCheckId});
+    }
+
+    //Delete Method ============================================
+    [HttpPost("sitecheck/{id}/delete")]
+    public IActionResult Delete(int id)
 
     
-    // {
-    //     Recipe? recipes = db.Recipes.FirstOrDefault(v => v.RecipeId == id);
+    {
+        SiteCheck? siteChecks = db.SiteChecks.FirstOrDefault(v => v.SiteCheckId == id);
 
-    //     //added to stop from deleting other's input data
-    //     if(recipes == null || recipes.UserId != HttpContext.Session.GetInt32("UUID")) 
-    //     {
-    //         return RedirectToAction("Index");
-    //     }
+        //added to stop from deleting other's input data
+        if(siteChecks == null || siteChecks.UserId != HttpContext.Session.GetInt32("UUID")) 
+        {
+            return RedirectToAction("Index");
+        }
 
-    //     db.Recipes.Remove(recipes);
-    //     db.SaveChanges();
-    //     return RedirectToAction("Index");
-    // }
+        db.SiteChecks.Remove(siteChecks);
+        db.SaveChanges();
+        return RedirectToAction("Index");
+    }
 
 
 
+
+//TODO - UPDATE ENTIRE CONTROLLER BELOW AND ADD WEB SCRAPER ROUTES ============================================
     //! setting up many to many ITriedThis method ================
     // //ITriedThis Method ============================================
     // [HttpPost("recipes/{id}/itriedthis")]
