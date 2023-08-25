@@ -1,7 +1,7 @@
 @model SiteCheck
 
 @{
-    ViewData["Title"] = $"{Model.SiteCheckName}";
+    ViewData["Title"] = $"{Model.SiteCheckParcelID}";
 }
 <div>
     @* Top of Page *@
@@ -18,9 +18,9 @@
     @* Results Table *@
     <div>
 <p>TABLE GOES HERE...</p>
-<p>@Html.Raw(Model.SiteCheckName)</p>
 <p>Full Address - from web scraper...</p>
 <p>Owner Name - from web scraper...</p>
+@* <p>Zoning: @Html.Raw(Model.SiteCheckParcelID)</p> *@
 <p>Zoning: @Html.Raw(Model.SiteCheckName)</p>
 <p>Flood Zone - from web scraper...</p>
 <p>Airport - from web scraper...</p>

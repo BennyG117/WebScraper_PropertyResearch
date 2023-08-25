@@ -78,7 +78,7 @@ public class SiteCheckController : Controller
         //returns itself if left blank
         return View();
     }
-//TODO: REVISED CREATE METHOD ==========================
+//REVISED CREATE METHOD ==========================
 [HttpPost("sitecheck/create")]
 public async Task<IActionResult> Create(SiteCheck newSiteCheck)
 {
@@ -87,7 +87,9 @@ public async Task<IActionResult> Create(SiteCheck newSiteCheck)
         return View("New");
     }
 
-    string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
+    string parcelId = newSiteCheck.SiteCheckParcelID;
+    string url = $"https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel={parcelId}";
+    // string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
 
     using (IWebDriver driver = new ChromeDriver())
     {
@@ -131,95 +133,7 @@ public async Task<IActionResult> Create(SiteCheck newSiteCheck)
 
     return RedirectToAction("Details", new { id = newSiteCheck.SiteCheckId });
 }
-//TODO:^^^^^^^^^^^^^^^^^^^^^^ ==========================
-// ========(handle NEW SiteCheck Method - view)=========
-
-//     [HttpPost("sitecheck/create")]
-//     //bringing in the model
-//     // public IActionResult Create(SiteCheck newSiteCheck)
-//     public async Task<IActionResult> Create(SiteCheck newSiteCheck)
-//     {
-//     if (!ModelState.IsValid)
-//     {
-//         return View("New");
-//     }
-
-//     string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
-
-//     using (IWebDriver driver = new ChromeDriver())
-//     {
-//         driver.Navigate().GoToUrl(url);
-
-//         // Wait for the page to load and the dynamic content to be visible
-//         WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-//         //! ERROR DO NOT USE - NOM CURRENT CAP ON DATA REQUEST IS SET*********************
-//         // Find the element using its XPath
-//         IWebElement element = driver.FindElement(By.XPath("//*[@id='overlay_ZONECNTY']/a"));
-
-
-
-//         // Get the zoning code
-//         string zoning = element.Text;
-
-//         newSiteCheck.SiteCheckName = zoning;
-
-//         // Now you can use the scraped data as needed
-//         Console.WriteLine("***************** Zoning: " + zoning);
-//     }
-
-//     newSiteCheck.UserId = (int)HttpContext.Session.GetInt32("UUID");
-
-//     // Save the newSiteCheck to the database
-//     db.SiteChecks.Add(newSiteCheck);
-//     db.SaveChanges();
-
-//     return RedirectToAction("Details", new { id = newSiteCheck.SiteCheckId });
-// }
-//==============================================
-//     {
-
-//         //checks model requirements*
-//         if(!ModelState.IsValid)
-//         {
-//             //trigger to see validations
-//             return View("New");
-//         }
-
-//         // ADD web scraping code here...      
-//     //TODO: Adding Selenium Web Scraping (attempt 1) ==============================================
-//     string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
-
-// using (IWebDriver driver = new ChromeDriver())
-// {
-//     driver.Navigate().GoToUrl(url);
-
-//     // Wait for the page to load and the dynamic content to be visible
-//     WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-//     // IWebElement element = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("overlay_ZONECNTY")));
-//     IWebElement element = driver.FindElements(By.XPath("//*[@id='overlay_ZONECNTY']/a"));
-
-//     // Get the zoning code
-//     string zoning = element.Text;
-
-//     newSiteCheck.SiteCheckName = zoning;
-
-
-//     // Now you can use the scraped data as needed
-//     Console.WriteLine("***************** Zoning: " + zoning);
-// }
-
-
-//   //end of web scraper =============================================
-
-
-//         newSiteCheck.UserId = (int) HttpContext.Session.GetInt32("UUID");
-
-//         //siteChecks from context
-//         db.SiteChecks.Add(newSiteCheck);
-//         db.SaveChanges();
-//         //When success, send to Details view single SiteCheck
-//         return RedirectToAction("Details",  new {id = newSiteCheck.SiteCheckId});
-//     }
+//^^^^^^^^^^^^^^^^^^^^^^ ==========================
 
 
 // ==============(get sitecheck view/view one)===================

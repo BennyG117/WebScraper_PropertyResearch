@@ -18,9 +18,14 @@
                 @* section *@
                 <div class="mb-3">
                     <label asp-for="SiteCheckParcelID"></label>
-                    <input asp-for="SiteCheckParcelID" type="text" class="form-control"/>
+                    <input asp-for="SiteCheckParcelID" type="text" class="form-control" name="SiteCheckParcelID" />
                     <span asp-validation-for="SiteCheckParcelID" class="text-danger font-weight-bold"></span>
                 </div>
+                @* <div class="mb-3">
+                    <label asp-for="SiteCheckParcelID"></label>
+                    <input asp-for="SiteCheckParcelID" type="text" class="form-control"/>
+                    <span asp-validation-for="SiteCheckParcelID" class="text-danger font-weight-bold"></span>
+                </div> *@
                 <div>
                     <button class="btn btn-outline-dark">Submit Site Check Request</button>
                 </div>
