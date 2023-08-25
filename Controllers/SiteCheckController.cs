@@ -1,14 +1,23 @@
+using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using WebScraper_PropertyResearch.Models;
 using HtmlAgilityPack;
-//! ADDING THE FOLLOWING FOR ATTEMPT 4 ===============
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using System.Net;
-using System.Text;
 
+//! adding selenium for web scraper ==================
+
+//!===================================================
+
+
+//! ADDING THE FOLLOWING FOR ATTEMPT 4 ===============
+// using System.Net.Http;
+// using System.Net.Http.Headers;
+// using System.Threading.Tasks;
+// using System.Net;
+// using System.Text;
 //!===================================================
 
 namespace WebScraper_PropertyResearch.Controllers;
@@ -32,6 +41,8 @@ public class SiteCheckController : Controller
 
     // Add field - adding context into our class // "db" can eb any name
     private MyContext db;
+
+
 
     public SiteCheckController(ILogger<SiteCheckController> logger, MyContext context)
     {
@@ -67,51 +78,148 @@ public class SiteCheckController : Controller
         //returns itself if left blank
         return View();
     }
-
-// ========(handle NEW SiteCheck Method - view)=========
-
-    [HttpPost("sitecheck/create")]
-    //bringing in the model
-    // public IActionResult Create(SiteCheck newSiteCheck)
-    public async Task<IActionResult> Create(SiteCheck newSiteCheck)
+//TODO: REVISED CREATE METHOD ==========================
+[HttpPost("sitecheck/create")]
+public async Task<IActionResult> Create(SiteCheck newSiteCheck)
+{
+    if (!ModelState.IsValid)
     {
+        return View("New");
+    }
 
-        //checks model requirements*
-        if(!ModelState.IsValid)
+    string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
+
+    using (IWebDriver driver = new ChromeDriver())
+    {
+        driver.Navigate().GoToUrl(url);
+
+        WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+
+        // Attempt to locate the element with retries
+        IWebElement element = null;
+        int maxAttempts = 2; // Set the maximum number of attempts
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
-            //trigger to see validations
-            return View("New");
+            try
+            {
+                element = driver.FindElement(By.XPath("//*[@id='overlay_ZONECNTY']/a"));
+                break; // If found, exit the loop
+            }
+            catch (NoSuchElementException)
+            {
+                await Task.Delay(1000); // Wait for 1 second before the next attempt
+            }
         }
 
-        // ADD web scraping code here...      
-
-    //TODO: continue to troubleshoot (attempt 2)..... in Web Scraper ===================================
-    string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
-    var httpClient = new HttpClient();
-    var html = await httpClient.GetStringAsync(url); // Use await here
-    var htmlDocument = new HtmlDocument();
-    htmlDocument.LoadHtml(html);
-
-    //Get the zoning code
-    var zoningCode = htmlDocument.DocumentNode.SelectSingleNode("//*[@id='overlay_ZONECNTY']/a");
-    var zoning = zoningCode?.InnerText.Trim() ?? "No data found - - - SHOULD DISPLAY HERE";
-    Console.WriteLine("***************** Zoning: " + zoning);
-
-
-    newSiteCheck.SiteCheckName = zoning;
-
-
-  //end =============================================
-
-
-        newSiteCheck.UserId = (int) HttpContext.Session.GetInt32("UUID");
-
-        //siteChecks from context
-        db.SiteChecks.Add(newSiteCheck);
-        db.SaveChanges();
-        //When success, send to Details view single SiteCheck
-        return RedirectToAction("Details",  new {id = newSiteCheck.SiteCheckId});
+        if (element != null)
+        {
+            string zoning = element.Text;
+            newSiteCheck.SiteCheckName = zoning;
+            Console.WriteLine("***************** Zoning: " + zoning);
+        }
+        else
+        {
+            newSiteCheck.SiteCheckName = "No data was found";
+            Console.WriteLine("***************** No data was found");
+        }
     }
+
+    newSiteCheck.UserId = (int)HttpContext.Session.GetInt32("UUID");
+    db.SiteChecks.Add(newSiteCheck);
+    db.SaveChanges();
+
+    return RedirectToAction("Details", new { id = newSiteCheck.SiteCheckId });
+}
+//TODO:^^^^^^^^^^^^^^^^^^^^^^ ==========================
+// ========(handle NEW SiteCheck Method - view)=========
+
+//     [HttpPost("sitecheck/create")]
+//     //bringing in the model
+//     // public IActionResult Create(SiteCheck newSiteCheck)
+//     public async Task<IActionResult> Create(SiteCheck newSiteCheck)
+//     {
+//     if (!ModelState.IsValid)
+//     {
+//         return View("New");
+//     }
+
+//     string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
+
+//     using (IWebDriver driver = new ChromeDriver())
+//     {
+//         driver.Navigate().GoToUrl(url);
+
+//         // Wait for the page to load and the dynamic content to be visible
+//         WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+//         //! ERROR DO NOT USE - NOM CURRENT CAP ON DATA REQUEST IS SET*********************
+//         // Find the element using its XPath
+//         IWebElement element = driver.FindElement(By.XPath("//*[@id='overlay_ZONECNTY']/a"));
+
+
+
+//         // Get the zoning code
+//         string zoning = element.Text;
+
+//         newSiteCheck.SiteCheckName = zoning;
+
+//         // Now you can use the scraped data as needed
+//         Console.WriteLine("***************** Zoning: " + zoning);
+//     }
+
+//     newSiteCheck.UserId = (int)HttpContext.Session.GetInt32("UUID");
+
+//     // Save the newSiteCheck to the database
+//     db.SiteChecks.Add(newSiteCheck);
+//     db.SaveChanges();
+
+//     return RedirectToAction("Details", new { id = newSiteCheck.SiteCheckId });
+// }
+//==============================================
+//     {
+
+//         //checks model requirements*
+//         if(!ModelState.IsValid)
+//         {
+//             //trigger to see validations
+//             return View("New");
+//         }
+
+//         // ADD web scraping code here...      
+//     //TODO: Adding Selenium Web Scraping (attempt 1) ==============================================
+//     string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
+
+// using (IWebDriver driver = new ChromeDriver())
+// {
+//     driver.Navigate().GoToUrl(url);
+
+//     // Wait for the page to load and the dynamic content to be visible
+//     WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+//     // IWebElement element = wait.Until(ExpectedConditions.ElementIsVisible(By.Id("overlay_ZONECNTY")));
+//     IWebElement element = driver.FindElements(By.XPath("//*[@id='overlay_ZONECNTY']/a"));
+
+//     // Get the zoning code
+//     string zoning = element.Text;
+
+//     newSiteCheck.SiteCheckName = zoning;
+
+
+//     // Now you can use the scraped data as needed
+//     Console.WriteLine("***************** Zoning: " + zoning);
+// }
+
+
+//   //end of web scraper =============================================
+
+
+//         newSiteCheck.UserId = (int) HttpContext.Session.GetInt32("UUID");
+
+//         //siteChecks from context
+//         db.SiteChecks.Add(newSiteCheck);
+//         db.SaveChanges();
+//         //When success, send to Details view single SiteCheck
+//         return RedirectToAction("Details",  new {id = newSiteCheck.SiteCheckId});
+//     }
 
 
 // ==============(get sitecheck view/view one)===================

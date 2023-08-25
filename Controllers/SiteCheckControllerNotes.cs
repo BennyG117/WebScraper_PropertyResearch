@@ -65,6 +65,23 @@
 
     // newSiteCheck.SiteCheckName = zoning;
 
+
+
+    //TODO: continue to troubleshoot (attempt 2)..... in Web Scraper ===================================
+    // string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
+    // var httpClient = new HttpClient();
+    // var html = await httpClient.GetStringAsync(url); // Use await here
+    // var htmlDocument = new HtmlDocument();
+    // htmlDocument.LoadHtml(html);
+
+    // //Get the zoning code
+    // var zoningCode = htmlDocument.DocumentNode.SelectSingleNode("//*[@id='overlay_ZONECNTY']/a");
+    // var zoning = zoningCode?.InnerText.Trim() ?? "No data found - - - SHOULD DISPLAY HERE";
+    // Console.WriteLine("***************** Zoning: " + zoning);
+
+
+    // newSiteCheck.SiteCheckName = zoning;
+
 //! alt attempt to gather the data by using SelectNodes...
 // string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
 // var httpClient = new HttpClient();
