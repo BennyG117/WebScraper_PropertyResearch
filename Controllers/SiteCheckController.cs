@@ -2,6 +2,14 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using WebScraper_PropertyResearch.Models;
 using HtmlAgilityPack;
+//! ADDING THE FOLLOWING FOR ATTEMPT 4 ===============
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using System.Net;
+using System.Text;
+
+//!===================================================
 
 namespace WebScraper_PropertyResearch.Controllers;
 
@@ -11,6 +19,8 @@ using Microsoft.EntityFrameworkCore;
 //ADDED for session check
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using System.Runtime.CompilerServices;
 
 
 
@@ -62,7 +72,8 @@ public class SiteCheckController : Controller
 
     [HttpPost("sitecheck/create")]
     //bringing in the model
-    public IActionResult Create(SiteCheck newSiteCheck)
+    // public IActionResult Create(SiteCheck newSiteCheck)
+    public async Task<IActionResult> Create(SiteCheck newSiteCheck)
     {
 
         //checks model requirements*
@@ -71,18 +82,27 @@ public class SiteCheckController : Controller
             //trigger to see validations
             return View("New");
         }
-//! Adding in Web Scraper ===================================
 
-    string websiteZoningExample = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
-    HtmlWeb web = new HtmlWeb();
-    HtmlDocument doc = web.Load(websiteZoningExample); 
+        // ADD web scraping code here...      
 
-    // string countyZoning = doc.DocumentNode.SelectSingleNode("//a[@target='_blank' and contains(@href, 'code=CB-1')]")?.InnerText ?? "No data found";
+    //TODO: continue to troubleshoot (attempt 2)..... in Web Scraper ===================================
+    string url = "https://gis.pima.gov/maps/detail.cfm?mode=overlayParcelResults&type=ZoningBase&typename=Zoning&parcel=10908126R";
+    var httpClient = new HttpClient();
+    var html = await httpClient.GetStringAsync(url); // Use await here
+    var htmlDocument = new HtmlDocument();
+    htmlDocument.LoadHtml(html);
 
-    string countyZoning = doc.GetElementbyId("overlay_ZONECNTY")?.SelectSingleNode("a")?.InnerText ?? "No data found";
+    //Get the zoning code
+    var zoningCode = htmlDocument.DocumentNode.SelectSingleNode("//*[@id='overlay_ZONECNTY']/a");
+    var zoning = zoningCode?.InnerText.Trim() ?? "No data found - - - SHOULD DISPLAY HERE";
+    Console.WriteLine("***************** Zoning: " + zoning);
 
-    newSiteCheck.SiteCheckName = countyZoning;  
-//!==========================================================
+
+    newSiteCheck.SiteCheckName = zoning;
+
+
+  //end =============================================
+
 
         newSiteCheck.UserId = (int) HttpContext.Session.GetInt32("UUID");
 
