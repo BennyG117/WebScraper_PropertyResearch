@@ -8,13 +8,13 @@
     <form asp-action="Register" asp-controller="User" method="Post" class="shadow p-3 rounded">
         @* section *@
         <div class="mb-3">
-            <label asp-for="FirstName"></label>
+            <label asp-for="FirstName">First Name</label>
             <input asp-for="FirstName" type="text" class="form-control"/>
             <span asp-validation-for="FirstName" class="text-danger font-weight-bold"></span>
         </div>
         @* section *@
         <div class="mb-3">
-            <label asp-for="LastName"></label>
+            <label asp-for="LastName">Last Name</label>
             <input asp-for="LastName" type="text" class="form-control"/>
             <span asp-validation-for="LastName" class="text-danger font-weight-bold"></span>
         </div>
@@ -32,7 +32,7 @@
         </div>
         @* section *@
         <div class="mb-3">
-            <label asp-for="PasswordConfirm"></label>
+            <label asp-for="PasswordConfirm">Confirm Password</label>
             <input asp-for="PasswordConfirm" type="password" class="form-control"/>
             <span asp-validation-for="PasswordConfirm" class="text-danger font-weight-bold"></span>
         </div>

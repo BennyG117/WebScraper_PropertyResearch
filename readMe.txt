@@ -1,27 +1,9 @@
--Create MVC structure
-
--install htmlAgilityPack
-
--update program, etc
-
--draft models
-
--draft controllers
-
--set up Login/Registration
-
--Draft routes for scraper forms...
-
--draft view pages
-
--troubleshoot htmlAgilityPack documentation and get single test case working
-
--determine file path to have scraping info populate a table
-
--update controllers/form to gather correct and complete data
-
--confirm CRUD working 
-
--Update css
-
--present Friday!
+TODO List: 
+>New.cshtml - importing first name using model?
+>All.cshtml - Revise title of siteChecks to match the name input on New Site Checks
+>Fix the ability to format Doc on C#
+>Details.cshtml - Add session check to Edit button, so that it's only visible to it's creator
+>Details.cshtml - create a results table to have data fill based on the selenium controller
+>SitecheckController.cs - Update the selenium search so that it pulls research results from additional locations (update results table in details accordingly*)
+>
+>

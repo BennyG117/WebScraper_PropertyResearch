@@ -1,33 +1,39 @@
 @model List<SiteCheck> 
 
-    <div class="container d-flex">
-        <div>
-            <h1>Site Check List</h1>
-        </div>
-        <div>
-            <ul class="container">
-                @foreach (SiteCheck siteCheck in Model)
-                {
-                    <li class="list-inline mb-3"> 
-                        <div>
-                            <a class="text-dark" asp-controller="SiteCheck" asp-action="Details" asp-route-id="@siteCheck.SiteCheckId">@siteCheck.SiteCheckName</a>
-                            - @siteCheck.CreatedAt.Date
-                                <div class="d-flex">
-                                    @if(siteCheck.UserId == Context.Session.GetInt32("UUID"))
-                                        {
-                                            <p>
-                                                <a  asp-controller="SiteCheck" asp-action="Edit" asp-route-id="@siteCheck.SiteCheckId" class="btn btn-outline-success mt-2">Edit</a>
-                                            </p>
-                                            <p>
-                                                <form asp-controller="SiteCheck" asp-action="Delete" asp-route-id="@siteCheck.SiteCheckId" method="post">
-                                                    <button class="btn btn-outline-danger mt-2">Delete</button>
-                                                </form>
-                                            </p>
-                                        }
-                                </div>
-                        </div>
-                    </li>
-                }
-            </ul>
+    <div class="container d-flex justify-content-start">
+        <div class="d-flex flex-column">
+            <h1 class="mb-4 ">Site Check List</h1>
+            <div>
+                @*TODO: update the dashboard list below: revise sitecheck names to match siteCheckName from new input // create scrollable list for the dash*@
+                <ul class="container ">
+                    @foreach (SiteCheck siteCheck in Model)
+                    {
+                        <li class=" list-inline mb-3"> 
+                            <div class="border border-dark rounded  p-3">
+                                <a class="text-dark" asp-controller="SiteCheck" asp-action="Details" asp-route-id="@siteCheck.SiteCheckId">@siteCheck.SiteCheckName</a>
+                                - @siteCheck.CreatedAt.Date
+                                    <div class="d-flex flex-column ">
+                                        @if(siteCheck.UserId == Context.Session.GetInt32("UUID"))
+                                            {
+                                                <div class="d-flex mb-3">
+                                                    <p>
+                                                        <a  asp-controller="SiteCheck" asp-action="Edit" asp-route-id="@siteCheck.SiteCheckId" class="btn btn-outline-success mt-2">Edit</a>
+                                                    </p>
+                                                    <p>
+                                                        <form asp-controller="SiteCheck" asp-action="Delete" asp-route-id="@siteCheck.SiteCheckId" method="post">
+                                                            <button class="btn btn-outline-danger mt-2">Delete</button>
+                                                        </form>
+                                                    </p>
+                                                </div>
+                                            }
+                                    </div>
+                                    <div>
+                                        <p>Created By: Creator Name Here</p>
+                                    </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
         </div>
     </div>

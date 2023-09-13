@@ -1,9 +1,11 @@
 @model SiteCheck
 
-<div>
+<div class="container">
     <div>
         <h1>Site Check</h1>
-        <p>Hi "First Name", enter your target property's Parcel ID to generate property research results.</p>
+        @*TODO: Determine correct way to refer to First Name of user in Session *@
+        @* <p>@Model.Creator.FirstName</p> *@
+        <p>Hi "FIRST NAME", enter your target property's Parcel ID to generate property research results.</p>
         <p>(Pima County Only)</p>
     </div>
     <div class="container w-100 mx-auto">
